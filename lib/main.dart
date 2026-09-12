@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-
 
 void main() {
   runApp(const JigriYaarApp());
+}
+
+void showMessage(BuildContext context, String msg) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(msg),
+      duration: const Duration(seconds: 1),
+    ),
+  );
 }
 
 class JigriYaarApp extends StatelessWidget {
@@ -104,8 +111,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainState =
-        context.findAncestorStateOfType<_MainScreenState>();
+    final mainState = context.findAncestorStateOfType<_MainScreenState>();
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -138,7 +144,6 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-
             Text(
               'Apne jigri yaaro ke saath connect karo 👋',
               style: TextStyle(
@@ -146,9 +151,7 @@ class HomePage extends StatelessWidget {
                 fontSize: 15,
               ),
             ),
-
             const SizedBox(height: 22),
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(22),
@@ -181,8 +184,6 @@ class HomePage extends StatelessWidget {
                     'Naye logo se milo, baat karo aur masti karo.',
                   ),
                   const SizedBox(height: 18),
-
-                  // WORKING BUTTON
                   ElevatedButton(
                     onPressed: () {
                       mainState?.openRooms();
@@ -196,9 +197,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 28),
-
             const Text(
               'Popular Rooms',
               style: TextStyle(
@@ -206,9 +205,7 @@ class HomePage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 14),
-
             RoomCard(
               title: 'Jigri Yaar Lounge',
               subtitle: '128 people online',
@@ -217,7 +214,6 @@ class HomePage extends StatelessWidget {
                 mainState?.openRooms();
               },
             ),
-
             RoomCard(
               title: 'Gaming Zone 🎮',
               subtitle: '86 people online',
@@ -226,7 +222,6 @@ class HomePage extends StatelessWidget {
                 mainState?.openRooms();
               },
             ),
-
             RoomCard(
               title: 'Music & Masti 🎵',
               subtitle: '64 people online',
@@ -235,9 +230,7 @@ class HomePage extends StatelessWidget {
                 mainState?.openRooms();
               },
             ),
-
             const SizedBox(height: 10),
-
             Row(
               children: [
                 Expanded(
@@ -286,7 +279,6 @@ class RoomsPage extends StatelessWidget {
             subtitle: 'Live rooms mein join karo',
           ),
           const SizedBox(height: 18),
-
           RoomCard(
             title: 'Jigri Yaar Lounge',
             subtitle: '128 people online',
@@ -295,7 +287,6 @@ class RoomsPage extends StatelessWidget {
               showMessage(context, 'Jigri Yaar Lounge selected');
             },
           ),
-
           RoomCard(
             title: 'Gaming Zone 🎮',
             subtitle: '86 people online',
@@ -304,7 +295,6 @@ class RoomsPage extends StatelessWidget {
               showMessage(context, 'Gaming Zone selected');
             },
           ),
-
           RoomCard(
             title: 'Music & Masti 🎵',
             subtitle: '64 people online',
@@ -313,7 +303,6 @@ class RoomsPage extends StatelessWidget {
               showMessage(context, 'Music & Masti selected');
             },
           ),
-
           RoomCard(
             title: 'Chill & Talk',
             subtitle: '42 people online',
@@ -378,25 +367,22 @@ class FriendsPage extends StatelessWidget {
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
-          const PageHeader(
+        children: const [
+          PageHeader(
             title: 'Friends',
             subtitle: 'Apne jigri friends manage karo',
           ),
-          const SizedBox(height: 18),
-
+          SizedBox(height: 18),
           FriendCard(
             name: 'Jigri Friend',
             status: 'Online',
             icon: Icons.person,
           ),
-
           FriendCard(
             name: 'Gaming Buddy',
             status: 'In a room',
             icon: Icons.gamepad,
           ),
-
           FriendCard(
             name: 'Music Friend',
             status: 'Offline',
@@ -423,9 +409,7 @@ class ProfilePage extends StatelessWidget {
             title: 'Profile',
             subtitle: 'Apna Jigri Yaar profile',
           ),
-
           const SizedBox(height: 22),
-
           Center(
             child: Column(
               children: [
@@ -446,9 +430,7 @@ class ProfilePage extends StatelessWidget {
                     size: 52,
                   ),
                 ),
-
                 const SizedBox(height: 14),
-
                 const Text(
                   'Jigri Yaar User',
                   style: TextStyle(
@@ -456,10 +438,8 @@ class ProfilePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
-                Text(
+                const Text(
                   '@jigriyaar',
                   style: TextStyle(
                     color: Colors.grey,
@@ -468,9 +448,7 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 28),
-
           ProfileOption(
             icon: Icons.edit_outlined,
             title: 'Edit Profile',
@@ -478,7 +456,6 @@ class ProfilePage extends StatelessWidget {
               showMessage(context, 'Edit Profile');
             },
           ),
-
           ProfileOption(
             icon: Icons.card_giftcard,
             title: 'My Gifts',
@@ -486,7 +463,6 @@ class ProfilePage extends StatelessWidget {
               showMessage(context, 'My Gifts');
             },
           ),
-
           ProfileOption(
             icon: Icons.monetization_on_outlined,
             title: 'Coins',
@@ -494,7 +470,6 @@ class ProfilePage extends StatelessWidget {
               showMessage(context, 'Coins');
             },
           ),
-
           ProfileOption(
             icon: Icons.settings_outlined,
             title: 'Settings',
@@ -508,7 +483,87 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-// ================= ROOM CARD =================
+// ================= COMMON COMPONENTS =================
+
+class PageHeader extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const PageHeader({
+    super.key,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: Colors.grey.shade400,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ProfileOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const ProfileOption({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFF151722),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white70, size: 24),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white38),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class RoomCard extends StatelessWidget {
   final String title;
@@ -554,9 +609,7 @@ class RoomCard extends StatelessWidget {
                 size: 29,
               ),
             ),
-
             const SizedBox(width: 14),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -579,7 +632,6 @@ class RoomCard extends StatelessWidget {
                 ],
               ),
             ),
-
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
@@ -590,8 +642,6 @@ class RoomCard extends StatelessWidget {
     );
   }
 }
-
-// ================= FEATURE CARD =================
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -637,8 +687,6 @@ class FeatureCard extends StatelessWidget {
   }
 }
 
-// ================= CHAT CARD =================
-
 class ChatCard extends StatelessWidget {
   final String name;
   final String message;
@@ -672,9 +720,7 @@ class ChatCard extends StatelessWidget {
               color: const Color(0xFFFF1744),
             ),
           ),
-
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,90 +741,8 @@ class ChatCard extends StatelessWidget {
               ],
             ),
           ),
-
           Text(
             time,
             style: TextStyle(
               color: Colors.grey.shade600,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= FRIEND CARD =================
-
-class FriendCard extends StatelessWidget {
-  final String name;
-  final String status;
-  final IconData icon;
-
-  const FriendCard({
-    super.key,
-    required this.name,
-    required this.status,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF151722),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 27,
-            backgroundColor: const Color(0x33FF1744),
-            child: Icon(
-              icon,
-              color: const Color(0xFFFF1744),
-            ),
-          ),
-
-          const SizedBox(width: 14),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  status,
-                  style: TextStyle(
-                    color: status == 'Online'
-                        ? Colors.greenAccent
-                        : Colors.grey.shade500,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          IconButton(
-            onPressed: () {
-              showMessage(context, 'Chat with $name');
-            },
-            icon: const Icon(Icons.chat_outlined),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= PROFILE 
+            
