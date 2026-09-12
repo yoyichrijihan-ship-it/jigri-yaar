@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+dependencies:
+  flutter_webrtc: ^1.6.2+hotfix.1import 'package:flutter/material.dart';
 
 void main() {
   runApp(const JigriYaarApp());
