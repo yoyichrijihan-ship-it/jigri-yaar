@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Secrets / local files
+android/app/google-services.json
+.npm-cache/
+node_modules/
+lib/main.dart.backup

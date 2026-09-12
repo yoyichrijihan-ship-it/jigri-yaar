@@ -1,7 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.android,
+  );
+
   runApp(const JigriYaarApp());
 }
 
@@ -21,7 +30,179 @@ class JigriYaarApp extends StatelessWidget {
           brightness: Brightness.dark,
         ),
       ),
-      home: const HomePage(),
+      home: const PhoneLoginPage(),
+    );
+  }
+}
+
+
+
+class PhoneLoginPage extends StatefulWidget {
+  const PhoneLoginPage({super.key});
+
+  @override
+  State<PhoneLoginPage> createState() => _PhoneLoginPageState();
+}
+
+class _PhoneLoginPageState extends State<PhoneLoginPage> {
+  final phoneController = TextEditingController();
+  final otpController = TextEditingController();
+
+  String? verificationId;
+  bool codeSent = false;
+  bool loading = false;
+
+  Future<void> sendOtp() async {
+    final phone = phoneController.text.trim();
+
+    if (phone.isEmpty) return;
+
+    setState(() => loading = true);
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phone,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await FirebaseAuth.instance.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.message ?? 'Verification failed')),
+          );
+        }
+      },
+      codeSent: (String id, int? resendToken) {
+        if (mounted) {
+          setState(() {
+            verificationId = id;
+            codeSent = true;
+            loading = false;
+          });
+        }
+      },
+      codeAutoRetrievalTimeout: (String id) {
+        verificationId = id;
+      },
+    );
+
+    if (mounted && !codeSent) {
+      setState(() => loading = false);
+    }
+  }
+
+  Future<void> verifyOtp() async {
+    if (verificationId == null || otpController.text.trim().isEmpty) return;
+
+    setState(() => loading = true);
+
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: verificationId!,
+        smsCode: otpController.text.trim(),
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'Invalid OTP')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF090A10),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Jigri Yaar',
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Login with your phone number',
+                style: TextStyle(color: Colors.white70),
+              ),
+              const SizedBox(height: 35),
+
+              TextField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: '+91 9876543210',
+                  hintStyle: const TextStyle(color: Colors.white38),
+                  prefixIcon: const Icon(Icons.phone, color: Colors.white70),
+                  filled: true,
+                  fillColor: const Color(0xFF171923),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+
+              if (codeSent) ...[
+                const SizedBox(height: 15),
+                TextField(
+                  controller: otpController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Enter OTP',
+                    hintStyle: const TextStyle(color: Colors.white38),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.white70),
+                    filled: true,
+                    fillColor: const Color(0xFF171923),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: loading
+                      ? null
+                      : (codeSent ? verifyOtp : sendOtp),
+                  child: Text(
+                    loading
+                        ? 'Please wait...'
+                        : (codeSent ? 'Verify OTP' : 'Send OTP'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
