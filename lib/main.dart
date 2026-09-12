@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 void main() {
   runApp(const JigriYaarApp());
-}
-
-void showMessage(BuildContext context, String msg) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(msg),
-      duration: const Duration(seconds: 1),
-    ),
-  );
 }
 
 class JigriYaarApp extends StatelessWidget {
@@ -28,133 +20,35 @@ class JigriYaarApp extends StatelessWidget {
           seedColor: const Color(0xFFFF1744),
           brightness: Brightness.dark,
         ),
-        useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const HomePage(),
     );
   }
 }
-
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int selectedIndex = 0;
-
-  final List<Widget> pages = const [
-    HomePage(),
-    RoomsPage(),
-    ChatPage(),
-    FriendsPage(),
-    ProfilePage(),
-  ];
-
-  void openRooms() {
-    setState(() {
-      selectedIndex = 1;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: pages[selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        backgroundColor: const Color(0xFF11131D),
-        selectedIndex: selectedIndex,
-        indicatorColor: const Color(0x33FF1744),
-        onDestinationSelected: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.mic_none),
-            selectedIcon: Icon(Icons.mic),
-            label: 'Rooms',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.chat_bubble_outline),
-            selectedIcon: Icon(Icons.chat_bubble),
-            label: 'Chat',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: 'Friends',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= HOME =================
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final mainState = context.findAncestorStateOfType<_MainScreenState>();
-
-    return SafeArea(
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Jigri Yaar',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF11131D),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'Jigri Yaar',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showMessage(context, 'Notifications');
-                  },
-                  icon: const Icon(Icons.notifications_none),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showMessage(context, 'Settings');
-                  },
-                  icon: const Icon(Icons.settings_outlined),
-                ),
-              ],
-            ),
-            Text(
-              'Apne jigri yaaro ke saath connect karo 👋',
-              style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 20),
+
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [
@@ -164,97 +58,65 @@ class HomePage extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.mic_rounded,
-                    size: 44,
-                  ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'Voice Rooms',
+                  Icon(Icons.mic, size: 50),
+                  SizedBox(height: 15),
+                  Text(
+                    'Jigri Yaar Voice',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Naye logo se milo, baat karo aur masti karo.',
-                  ),
-                  const SizedBox(height: 18),
-                  ElevatedButton(
-                    onPressed: () {
-                      mainState?.openRooms();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                    ),
-                    child: const Text('Explore Rooms'),
+                  SizedBox(height: 8),
+                  Text(
+                    'Apne dosto ke saath voice room mein baat karo.',
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 28),
+
+            const SizedBox(height: 25),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const VoiceRoomPage(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.mic),
+                label: const Text(
+                  'Open Voice Room',
+                  style: TextStyle(fontSize: 17),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
             const Text(
-              'Popular Rooms',
+              'WebRTC microphone test',
               style: TextStyle(
-                fontSize: 21,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 14),
-            RoomCard(
-              title: 'Jigri Yaar Lounge',
-              subtitle: '128 people online',
-              icon: Icons.groups_rounded,
-              onTap: () {
-                mainState?.openRooms();
-              },
-            ),
-            RoomCard(
-              title: 'Gaming Zone 🎮',
-              subtitle: '86 people online',
-              icon: Icons.sports_esports_rounded,
-              onTap: () {
-                mainState?.openRooms();
-              },
-            ),
-            RoomCard(
-              title: 'Music & Masti 🎵',
-              subtitle: '64 people online',
-              icon: Icons.music_note_rounded,
-              onTap: () {
-                mainState?.openRooms();
-              },
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: FeatureCard(
-                    icon: Icons.chat_bubble_outline,
-                    title: 'Chat',
-                    onTap: () {
-                      mainState?.setState(() {
-                        mainState.selectedIndex = 2;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FeatureCard(
-                    icon: Icons.card_giftcard,
-                    title: 'Gifts',
-                    onTap: () {
-                      showMessage(context, 'Gifts page coming soon 🎁');
-                    },
-                  ),
-                ),
-              ],
+
+            const SizedBox(height: 8),
+
+            Text(
+              'Voice Room open karke microphone test kar sakte ho.',
+              style: TextStyle(
+                color: Colors.grey.shade400,
+              ),
             ),
           ],
         ),
@@ -263,273 +125,268 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ================= ROOMS =================
+class VoiceRoomPage extends StatefulWidget {
+  const VoiceRoomPage({super.key});
 
-class RoomsPage extends StatelessWidget {
-  const RoomsPage({super.key});
+  @override
+  State<VoiceRoomPage> createState() => _VoiceRoomPageState();
+}
+
+class _VoiceRoomPageState extends State<VoiceRoomPage> {
+  MediaStream? localStream;
+  bool micOn = false;
+  bool loading = false;
+
+  Future<void> startMicrophone() async {
+    if (loading) return;
+
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      final stream = await navigator.mediaDevices.getUserMedia({
+        'audio': true,
+        'video': false,
+      });
+
+      localStream = stream;
+
+      for (final track in stream.getAudioTracks()) {
+        track.enabled = true;
+      }
+
+      if (!mounted) return;
+
+      setState(() {
+        micOn = true;
+        loading = false;
+      });
+
+      showMessage('Microphone ON 🎙️');
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        loading = false;
+        micOn = false;
+      });
+
+      showMessage('Microphone permission/error: $e');
+    }
+  }
+
+  void toggleMicrophone() {
+    if (localStream == null) {
+      startMicrophone();
+      return;
+    }
+
+    final tracks = localStream!.getAudioTracks();
+
+    if (tracks.isEmpty) {
+      showMessage('Audio track nahi mila');
+      return;
+    }
+
+    for (final track in tracks) {
+      track.enabled = !track.enabled;
+      micOn = track.enabled;
+    }
+
+    setState(() {});
+
+    showMessage(
+      micOn ? 'Microphone ON 🎙️' : 'Microphone OFF 🔇',
+    );
+  }
+
+  Future<void> stopMicrophone() async {
+    final stream = localStream;
+
+    if (stream != null) {
+      for (final track in stream.getTracks()) {
+        track.stop();
+      }
+
+      await stream.dispose();
+    }
+
+    localStream = null;
+
+    if (!mounted) return;
+
+    setState(() {
+      micOn = false;
+    });
+  }
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    final stream = localStream;
+
+    if (stream != null) {
+      for (final track in stream.getTracks()) {
+        track.stop();
+      }
+      stream.dispose();
+    }
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
+    return Scaffold(
+      backgroundColor: const Color(0xFF090A10),
+      appBar: AppBar(
+        title: const Text('Voice Room'),
+        backgroundColor: const Color(0xFF11131D),
+      ),
+      body: Column(
         children: [
-          const PageHeader(
-            title: 'Voice Rooms',
-            subtitle: 'Live rooms mein join karo',
-          ),
-          const SizedBox(height: 18),
-          RoomCard(
-            title: 'Jigri Yaar Lounge',
-            subtitle: '128 people online',
-            icon: Icons.groups_rounded,
-            onTap: () {
-              showMessage(context, 'Jigri Yaar Lounge selected');
-            },
-          ),
-          RoomCard(
-            title: 'Gaming Zone 🎮',
-            subtitle: '86 people online',
-            icon: Icons.sports_esports_rounded,
-            onTap: () {
-              showMessage(context, 'Gaming Zone selected');
-            },
-          ),
-          RoomCard(
-            title: 'Music & Masti 🎵',
-            subtitle: '64 people online',
-            icon: Icons.music_note_rounded,
-            onTap: () {
-              showMessage(context, 'Music & Masti selected');
-            },
-          ),
-          RoomCard(
-            title: 'Chill & Talk',
-            subtitle: '42 people online',
-            icon: Icons.forum_rounded,
-            onTap: () {
-              showMessage(context, 'Chill & Talk selected');
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= CHAT =================
-
-class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          PageHeader(
-            title: 'Chat',
-            subtitle: 'Apne friends se baat karo',
-          ),
-          SizedBox(height: 18),
-          ChatCard(
-            name: 'Jigri Yaar',
-            message: 'Welcome to Jigri Yaar 👋',
-            time: 'Now',
-            icon: Icons.person,
-          ),
-          ChatCard(
-            name: 'Gaming Friends',
-            message: 'Room mein aao 🎮',
-            time: '5m',
-            icon: Icons.sports_esports,
-          ),
-          ChatCard(
-            name: 'Music Group',
-            message: 'Aaj music night hai 🎵',
-            time: '12m',
-            icon: Icons.music_note,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= FRIENDS =================
-
-class FriendsPage extends StatelessWidget {
-  const FriendsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          PageHeader(
-            title: 'Friends',
-            subtitle: 'Apne jigri friends manage karo',
-          ),
-          SizedBox(height: 18),
-          FriendCard(
-            name: 'Jigri Friend',
-            status: 'Online',
-            icon: Icons.person,
-          ),
-          FriendCard(
-            name: 'Gaming Buddy',
-            status: 'In a room',
-            icon: Icons.gamepad,
-          ),
-          FriendCard(
-            name: 'Music Friend',
-            status: 'Offline',
-            icon: Icons.music_note,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ================= PROFILE =================
-
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const PageHeader(
-            title: 'Profile',
-            subtitle: 'Apna Jigri Yaar profile',
-          ),
-          const SizedBox(height: 22),
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFFFF1744),
-                        Color(0xFF7B1FA2),
-                      ],
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: micOn
+                            ? const [
+                                Color(0xFFFF1744),
+                                Color(0xFF7B1FA2),
+                              ]
+                            : const [
+                                Color(0xFF252837),
+                                Color(0xFF151722),
+                              ],
+                      ),
+                    ),
+                    child: Icon(
+                      micOn ? Icons.mic : Icons.mic_off,
+                      size: 55,
                     ),
                   ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 52,
+
+                  const SizedBox(height: 25),
+
+                  const Text(
+                    'Jigri Yaar Lounge',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    micOn
+                        ? 'Microphone is ON'
+                        : 'Microphone is OFF',
+                    style: TextStyle(
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+
+                  const SizedBox(height: 35),
+
+                  SizedBox(
+                    width: 220,
+                    height: 55,
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          loading ? null : toggleMicrophone,
+                      icon: Icon(
+                        micOn ? Icons.mic_off : Icons.mic,
+                      ),
+                      label: Text(
+                        loading
+                            ? 'Starting...'
+                            : micOn
+                                ? 'Mute Mic'
+                                : 'Turn Mic On',
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  if (micOn)
+                    SizedBox(
+                      width: 220,
+                      height: 50,
+                      child: OutlinedButton(
+                        onPressed: stopMicrophone,
+                        child: const Text('Leave Voice Test'),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+
+          Container(
+            padding: const EdgeInsets.all(18),
+            color: const Color(0xFF11131D),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                RoomButton(
+                  icon: micOn ? Icons.mic : Icons.mic_off,
+                  label: 'Mic',
+                  active: micOn,
+                  onTap: toggleMicrophone,
                 ),
-                const SizedBox(height: 14),
-                const Text(
-                  'Jigri Yaar User',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                RoomButton(
+                  icon: Icons.card_giftcard,
+                  label: 'Gift',
+                  onTap: () {
+                    showMessage('Gifts coming soon 🎁');
+                  },
                 ),
-                const SizedBox(height: 5),
-                const Text(
-                  '@jigriyaar',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
+                RoomButton(
+                  icon: Icons.chat,
+                  label: 'Chat',
+                  onTap: () {
+                    showMessage('Room chat coming soon 💬');
+                  },
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 28),
-          ProfileOption(
-            icon: Icons.edit_outlined,
-            title: 'Edit Profile',
-            onTap: () {
-              showMessage(context, 'Edit Profile');
-            },
-          ),
-          ProfileOption(
-            icon: Icons.card_giftcard,
-            title: 'My Gifts',
-            onTap: () {
-              showMessage(context, 'My Gifts');
-            },
-          ),
-          ProfileOption(
-            icon: Icons.monetization_on_outlined,
-            title: 'Coins',
-            onTap: () {
-              showMessage(context, 'Coins');
-            },
-          ),
-          ProfileOption(
-            icon: Icons.settings_outlined,
-            title: 'Settings',
-            onTap: () {
-              showMessage(context, 'Settings');
-            },
-          ),
         ],
       ),
     );
   }
 }
 
-// ================= COMMON COMPONENTS =================
-
-class PageHeader extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const PageHeader({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: TextStyle(
-            color: Colors.grey.shade400,
-            fontSize: 14,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ProfileOption extends StatelessWidget {
+class RoomButton extends StatelessWidget {
   final IconData icon;
-  final String title;
+  final String label;
+  final bool active;
   final VoidCallback onTap;
 
-  const ProfileOption({
+  const RoomButton({
     super.key,
     required this.icon,
-    required this.title,
+    required this.label,
     required this.onTap,
+    this.active = false,
   });
 
   @override
@@ -537,212 +394,23 @@ class ProfileOption extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF151722),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.white70, size: 24),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.white38),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class RoomCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const RoomCard({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: const Color(0xFF151722),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: const Color(0xFF252837),
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(
-                color: const Color(0x33FF1744),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(
-                icon,
-                color: const Color(0xFFFF1744),
-                size: 29,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class FeatureCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const FeatureCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22),
-        decoration: BoxDecoration(
-          color: const Color(0xFF151722),
-          borderRadius: BorderRadius.circular(18),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: const Color(0xFFFF1744),
-              size: 30,
+            CircleAvatar(
+              radius: 27,
+              backgroundColor: active
+                  ? const Color(0xFFFF1744)
+                  : const Color(0xFF252837),
+              child: Icon(icon),
             ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            const SizedBox(height: 6),
+            Text(label),
           ],
         ),
       ),
     );
   }
-}
-
-class ChatCard extends StatelessWidget {
-  final String name;
-  final String message;
-  final String time;
-  final IconData icon;
-
-  const ChatCard({
-    super.key,
-    required this.name,
-    required this.message,
-    required this.time,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF151722),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 27,
-            backgroundColor: const Color(0x33FF1744),
-            child: Icon(
-              icon,
-              color: const Color(0xFFFF1744),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  message,
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Text(
-            time,
-            style: TextStyle(
-              color: Colors.grey.shade600,
+},
             
